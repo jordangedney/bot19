@@ -13,8 +13,8 @@
 (s.connect (, HOST PORT))
 (s.send (% "NICK %s\r\n" NICK))
 (s.send (% "USER %s %s bla :%s\r\n" (, IDENT HOST REALNAME)))
-(s.send "JOIN #test-room\r\n")
-(s.send (% "PRIVMSG #test-room :%s" "I am Bot 19\r\n"))
+(s.send "JOIN #encoded\r\n")
+(s.send (% "PRIVMSG #encoded :%s" "I am Bot 19\r\n"))
 
 (defn get_expression [line]
     (setv start_index (+ (line.index ":Bot19:") 8))
@@ -32,8 +32,9 @@
     (setv response (eval 
                     (first 
                     (hy.importer.import_buffer_to_hst expr))))
-    (setv response (str response))
-    (s.send (% "PRIVMSG #test-room :%s" (+ response "\r\n")))
+    (setv response_str (str response))
+    (s.send (% "PRIVMSG #encoded :%s" (+ response_str "\r\n")))
+    response
 )
 
 (while True 
@@ -46,7 +47,12 @@
         (print line)
 
         (if (in ":Bot19:" line)
-            (eval_statement line)
+            [(setv expr (get_expression line))
+             (eval (first (hy.importer.import_buffer_to_hst expr)))
+             (setv response (eval (first (hy.importer.import_buffer_to_hst expr))))
+             (setv response_str (str response))
+             (s.send (% "PRIVMSG #encoded :%s" (+ response_str "\r\n")))
+            ]
         )
 
         (setv line (string.rstrip line))
@@ -55,3 +61,4 @@
             (s.send (% "PONG %s\r\n" line[1])))
     )
 )
+
