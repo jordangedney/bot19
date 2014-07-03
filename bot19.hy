@@ -7,10 +7,10 @@
 
 (setv HOST "irc.freenode.net")
 (setv PORT 6667)
-(setv NICK "Bot21")
+(setv NICK "Bot19")
 (setv IDENT "Testiee")
 (setv REALNAME "Testertonn")
-(setv ROOM "#test-room")
+(setv ROOM "#encoded")
 
 (setv s (socket.socket))
 (s.connect (, HOST PORT))
@@ -18,6 +18,8 @@
 (s.send (% "USER %s %s bla :%s\r\n" (, IDENT HOST REALNAME)))
 (s.send (% "JOIN %s\r\n" ROOM))
 (s.send (% "PRIVMSG %s :%s" (, ROOM (% "I am %s\r\n" NICK))))
+
+
 
 (defn get_expression [line]
     (setv start_index (+ (line.index (+ ":" NICK ":")) 8))
@@ -50,7 +52,7 @@
                      (s.send (% "PRIVMSG %s :%s" (, ROOM (+ response_str "\r\n"))))
                     ]
                 )
-                (catch [e [NameError ValueError LexException]] (s.send 
+                (catch [e [NameError ValueError LexException TypeError]] (s.send 
                                         (% "PRIVMSG %s :%s" 
                                         (, ROOM "Syntax Error\r\n"))
                                      )
