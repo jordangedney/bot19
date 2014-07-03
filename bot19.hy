@@ -1,4 +1,3 @@
-
 (import socket)
 (import string)
 (import hy.importer)
@@ -55,8 +54,5 @@
         (setv line (string.split line))
         (if (= (first line) "PING")
             (s.send (% "PONG %s\r\n" line[1])))
-
     )
 )
-
-
