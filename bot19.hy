@@ -7,7 +7,7 @@
 
 (setv HOST "irc.freenode.net")
 (setv PORT 6667)
-(setv NICK "Bot21")
+(setv NICK "Bot19")
 (setv IDENT "Testiee")
 (setv REALNAME "Testertonn")
 (setv ROOM "#test-room")
