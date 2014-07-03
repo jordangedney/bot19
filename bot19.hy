@@ -7,10 +7,10 @@
 
 (setv HOST "irc.freenode.net")
 (setv PORT 6667)
-(setv NICK "Bot19")
+(setv NICK "Bot21")
 (setv IDENT "Testiee")
 (setv REALNAME "Testertonn")
-(setv ROOM "#test-room")
+(setv ROOM "#encoded")
 
 (setv s (socket.socket))
 (s.connect (, HOST PORT))
