@@ -3,7 +3,6 @@
 (import hy.importer)
 
 (setv HOST "irc.freenode.net")
-(setv PORT "irc.freenode.net")
 (setv PORT 6667)
 (setv NICK "Bot19")
 (setv IDENT "Testiee")
