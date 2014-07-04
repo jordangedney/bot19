@@ -4,35 +4,39 @@
 (import [hy.lex.exceptions [LexException]])
 
 
-
-(setv HOST "irc.freenode.net")
-(setv PORT 6667)
-(setv NICK "Bot19")
-(setv IDENT "Testiee")
-(setv REALNAME "Testertonn")
-(setv ROOM "#encoded")
-
-(setv s (socket.socket))
-(s.connect (, HOST PORT))
-(s.send (% "NICK %s\r\n" NICK))
-(s.send (% "USER %s %s bla :%s\r\n" (, IDENT HOST REALNAME)))
-(s.send (% "JOIN %s\r\n" ROOM))
-(s.send (% "PRIVMSG %s :%s" (, ROOM (% "I am %s\r\n" NICK))))
-
-
-
-(defn get_expression [line]
-    (setv start_index (+ (line.index (+ ":" NICK ":")) 8))
-    (setv end_index (len line))
-    (setv indicies (range start_index end_index))
-    (setv expr "")
-    (for [each indicies]
-        (setv expr (+ expr (get line each)))
+(defn loop []
+    (defn get_expression [line]
+        (setv start_index (+ (line.index (+ ":" NICK ":")) 8))
+        (setv end_index (len line))
+        (setv indicies (range start_index end_index))
+        (setv expr "")
+        (for [each indicies]
+            (setv expr (+ expr (get line each)))
+        )
+        expr
     )
-    expr
-)
 
-(defn main_loop []
+    (defn connect_to_room [s HOST PORT NICK IDENT REALNAME]
+        (s.connect (, HOST PORT))
+        (s.send (% "NICK %s\r\n" NICK))
+        (s.send (% "USER %s %s bla :%s\r\n" (, IDENT HOST REALNAME)))
+        (s.send (% "JOIN %s\r\n" ROOM))
+        (s.send (% "PRIVMSG %s :%s" (, ROOM (% "I am %s\r\n" NICK))))
+    )
+
+    (setv HOST "irc.freenode.net")
+    (setv PORT 6667)
+    (setv NICK "Bot19")
+    (setv IDENT "Testiee")
+    (setv REALNAME "Testertonn")
+    (setv ROOM "#test-room")
+    (setv s (socket.socket))
+
+    (connect_to_room s HOST PORT NICK IDENT REALNAME)
+    
+
+    (defn join_room [s room] (s.send (% "JOIN %s\r\n" room))) 
+
     (setv readbuffer "")
     (while True 
         (setv readbuffer (+ readbuffer (s.recv 1024)))
@@ -52,7 +56,7 @@
                      (s.send (% "PRIVMSG %s :%s" (, ROOM (+ response_str "\r\n"))))
                     ]
                 )
-                (catch [e [NameError ValueError LexException TypeError]] (s.send 
+                (catch [e [NameError ValueError LexException TypeError SyntaxError]] (s.send 
                                         (% "PRIVMSG %s :%s" 
                                         (, ROOM "Syntax Error\r\n"))
                                      )
@@ -67,4 +71,6 @@
     )
 )
 
-(main_loop)
+(while True
+    (loop)
+)

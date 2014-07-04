@@ -1,0 +1,10 @@
+(defn get_expression [line]
+    (setv start_index (+ (line.index (+ ":" NICK ":")) 8))
+    (setv end_index (len line))
+    (setv indicies (range start_index end_index))
+    (setv expr "")
+    (for [each indicies]
+        (setv expr (+ expr (get line each)))
+    )
+    expr
+)
