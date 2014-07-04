@@ -5,8 +5,8 @@ A programmable irc bot, written in Hy
 
 
 Bot19 is programmable using hy,
-He currently doesn't feature any error catching-
-Any messages directed towards him that he doesn't understand will cause him to crash.
+
+His main loop is within a function, so theoretically he is completely re-programmable within irc
 
 An example message:
 ```
