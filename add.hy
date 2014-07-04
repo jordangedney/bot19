@@ -20,3 +20,23 @@
 	))
 )
 
+
+
+
+
+  (try
+                    (if (in (+ ":" NICK ":") line)
+                        [(setv expr (get_expression line))
+                         (eval (first (hy.importer.import_buffer_to_hst expr)))
+                         (setv response (eval (first (hy.importer.import_buffer_to_hst expr))))
+                         (setv response_str (str response))
+                         (s.send (% "PRIVMSG %s :%s" (, ROOM (+ response_str "\r\n"))))
+                        ]
+                    )
+                    (catch [e [NameError ValueError LexException TypeError]] (s.send 
+                                            (% "PRIVMSG %s :%s" 
+                                            (, ROOM "Syntax Error\r\n"))
+                                         )
+                    )
+                )
+

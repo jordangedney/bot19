@@ -6,5 +6,5 @@
     (for [each indicies]
         (setv expr (+ expr (get line each)))
     )
-    expr
+    expr 
 )

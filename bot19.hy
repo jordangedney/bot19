@@ -5,6 +5,19 @@
 
 
 (defn loop []
+
+    ;; Load the Scripts 
+    (setv file (open "scripts.hy" "rw"))
+    (for [each file]
+        (try
+            (eval (first (hy.importer.import_buffer_to_hst each)))
+        
+        (catch [e [NameError ValueError 
+                   LexException TypeError 
+                   SyntaxError]]  (print each)
+        ))
+    )
+
     (defn get_expression [line]
         (setv start_index (+ (line.index (+ ":" NICK ":")) 8))
         (setv end_index (len line))
@@ -35,7 +48,6 @@
     (connect_to_room s HOST PORT NICK IDENT REALNAME)
     
 
-    (defn join_room [s room] (s.send (% "JOIN %s\r\n" room))) 
 
     (setv readbuffer "")
     (while True 
@@ -54,6 +66,13 @@
                      (setv response (eval (first (hy.importer.import_buffer_to_hst expr))))
                      (setv response_str (str response))
                      (s.send (% "PRIVMSG %s :%s" (, ROOM (+ response_str "\r\n"))))
+                     (if (= (first (expr.split)) "(defn")
+                        [
+                            (setv file (open "scripts.hy" "a"))
+                            (file.write (+ "\n" expr))
+                            (file.close)
+                        ]
+                    )
                     ]
                 )
                 (catch [e [NameError ValueError LexException TypeError SyntaxError]] (s.send 
