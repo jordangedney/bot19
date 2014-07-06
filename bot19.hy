@@ -14,26 +14,40 @@
         
         (catch [e [NameError ValueError 
                    LexException TypeError 
-                   SyntaxError]]  (print each)
+                   SyntaxError IndexError]]  (print each)
         ))
     )
-
-    (defn get_expression [line]
-        (setv start_index (+ (line.index (+ ":" NICK ":")) 8))
-        (setv end_index (len line))
-        (setv indicies (range start_index end_index))
-        (setv expr "")
-        (for [each indicies]
-            (setv expr (+ expr (get line each)))
-        )
-        expr
+    
+    (defn minify [file_name] 
+        (setv file (open file_name "r")) 
+        (setv buff "") 
+        (for [each file] 
+            (setv buff (+ buff (+ (each.strip) " ")))
+        ) 
+        (file.close)
+        buff 
     )
 
-    (defn connect_to_room [s HOST PORT NICK IDENT REALNAME]
-        (s.connect (, HOST PORT))
-        (s.send (% "NICK %s\r\n" NICK))
-        (s.send (% "USER %s %s bla :%s\r\n" (, IDENT HOST REALNAME)))
-        (s.send (% "JOIN %s\r\n" ROOM))
+    (defn grab_url [url] (import os) 
+        (os.system "rm temp_file.hy")
+        (os.system (+ "curl " url " >> temp_file.hy"))
+    )
+
+    (defn parse_expression [line] 
+        (setv start_index (+ (line.index (+ ":" NICK ":")) 8)) 
+        (setv end_index (len line)) 
+        (setv indicies (range start_index end_index)) 
+        (setv expr "") 
+        (for [each indicies] 
+        (setv expr (+ expr (get line each)))) 
+        expr 
+    )
+
+    (defn connect_to_room [s HOST PORT NICK IDENT REALNAME] 
+        (s.connect (, HOST PORT)) 
+        (s.send (% "NICK %s\r\n" NICK)) 
+        (s.send (% "USER %s %s bla :%s\r\n" (, IDENT HOST REALNAME))) 
+        (s.send (% "JOIN %s\r\n" ROOM)) 
         (s.send (% "PRIVMSG %s :%s" (, ROOM (% "I am %s\r\n" NICK))))
     )
 
@@ -46,8 +60,23 @@
     (setv s (socket.socket))
 
     (connect_to_room s HOST PORT NICK IDENT REALNAME)
-    
 
+    (defn add_from_url [url]
+        (grab_url url)
+        (setv expr (minify "temp_file.hy"))
+        expr
+    )
+    
+    (defn get_expression [line]
+        (setv expr (parse_expression line))
+        (if (= (first (expr.split)) "(add_from_url")
+            [
+            (setv url (slice (second (expr.split)) 0 -1))
+            (setv expr (add_from_url url))
+            ]
+        )
+        expr
+    )
 
     (setv readbuffer "")
     (while True 

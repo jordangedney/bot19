@@ -5,3 +5,5 @@
 (defn add_two [x] (+ x 2))
 (defn add_three [x] (+ x 3))
 (defn add_five [x] (add_two (add_three x)))
+(defn add_four [x] (add_two (add_two x)))
+(defn add_six [x] (+ x 6) ) 
