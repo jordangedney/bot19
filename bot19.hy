@@ -7,7 +7,7 @@
 (defn loop []
 
     ;; Load the Scripts 
-    (setv file (open "scripts.hy" "rw"))
+    (setv file (open "scripts.hy" "r+"))
     (for [each file]
         (try
             (eval (first (hy.importer.import_buffer_to_hst each)))
